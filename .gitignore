@@ -3,3 +3,17 @@ shift_data.csv
 INSTRUCTIONS.md
 REVIEW_CHECKLIST.md
 .env
+
+# Python
+__pycache__/
+*.pyc
+*.db
+backend/shifts.db
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
