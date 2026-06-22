@@ -8,12 +8,13 @@ router = APIRouter(prefix="/api/analytics")
 FAILURE_CATEGORIES = ["Breakdown", "Unknown Failure"]
 
 
-def build_where(reason: str | None, date_from: str | None, date_to: str | None) -> tuple[str, list]:
+def build_where(reasons: list[str] | None, date_from: str | None, date_to: str | None) -> tuple[str, list]:
     clauses = ["is_valid = 1"]
     params = []
-    if reason:
-        clauses.append("reason = ?")
-        params.append(reason)
+    if reasons:
+        placeholders = ",".join("?" for _ in reasons)
+        clauses.append(f"reason IN ({placeholders})")
+        params.extend(reasons)
     if date_from:
         clauses.append("day_date >= ?")
         params.append(date_from)
@@ -25,7 +26,7 @@ def build_where(reason: str | None, date_from: str | None, date_to: str | None) 
 
 @router.get("/summary", response_model=AnalyticsSummary)
 def get_summary(
-    reason: str | None = Query(None),
+    reason: list[str] | None = Query(None),
     date_from: str | None = Query(None),
     date_to: str | None = Query(None),
 ):
@@ -36,10 +37,11 @@ def get_summary(
         f"SELECT * FROM shifts WHERE {where} ORDER BY day_date, start_time",
         params,
     ).fetchall()
+    all_cat_rows = conn.execute("SELECT DISTINCT reason FROM shifts WHERE is_valid = 1").fetchall()
     conn.close()
 
     by_category = defaultdict(lambda: {"hours": 0.0, "count": 0})
-    by_date = defaultdict(lambda: defaultdict(float))
+    by_date = defaultdict(lambda: defaultdict(lambda: {"hours": 0.0, "start": None, "end": None}))
 
     for r in rows:
         hours = r["computed_hours"] if r["computed_hours"] is not None else (r["reported_hours"] or 0)
@@ -47,9 +49,19 @@ def get_summary(
         by_category[cat]["hours"] += hours
         by_category[cat]["count"] += 1
         if r["day_date"]:
-            by_date[r["day_date"]][cat] += hours
+            by_date[r["day_date"]][cat]["hours"] += hours
+            if r["start_time"]:
+                t = r["start_time"][11:16]
+                curr_start = by_date[r["day_date"]][cat]["start"]
+                if not curr_start or t < curr_start:
+                    by_date[r["day_date"]][cat]["start"] = t
+            if r["end_time"]:
+                t = r["end_time"][11:16]
+                curr_end = by_date[r["day_date"]][cat]["end"]
+                if not curr_end or t > curr_end:
+                    by_date[r["day_date"]][cat]["end"] = t
 
-    categories = sorted(by_category.keys())
+    categories = sorted([r["reason"] for r in all_cat_rows if r["reason"]])
 
     return AnalyticsSummary(
         total_records=len(rows),
@@ -59,7 +71,7 @@ def get_summary(
             for k, v in sorted(by_category.items())
         ],
         by_date=[
-            DailySummary(date=d, total_hours=round(sum(cats.values()), 2), categories=dict(cats))
+            DailySummary(date=d, total_hours=round(sum(v["hours"] for v in cats.values()), 2), categories=dict(cats))
             for d, cats in sorted(by_date.items())
         ],
         categories=categories,

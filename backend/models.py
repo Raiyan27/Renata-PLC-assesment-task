@@ -27,7 +27,7 @@ class CategorySummary(BaseModel):
 class DailySummary(BaseModel):
     date: str
     total_hours: float
-    categories: dict[str, float]
+    categories: dict[str, dict]
 
 
 class AnalyticsSummary(BaseModel):

@@ -24,7 +24,7 @@ function generateInsights(
   const failureDays = summary.by_date
     .map((d) => {
       const failureHours = efficiency.failure_categories.reduce(
-        (sum, cat) => sum + (d.categories[cat] || 0),
+        (sum, cat) => sum + (d.categories[cat]?.hours || 0),
         0
       );
       return { date: d.date, failureHours };

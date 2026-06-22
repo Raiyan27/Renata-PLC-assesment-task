@@ -38,14 +38,14 @@ export default function CategoryBreakdown({ data }: Props) {
         Hours by Category
       </h2>
       <div className="flex items-center justify-center py-4">
-        <ResponsiveContainer width="100%" height={320}>
+        <ResponsiveContainer width="100%" height={450}>
           <PieChart>
             <Pie
               data={chartData}
               cx="50%"
-              cy="45%"
-              outerRadius={110}
-              innerRadius={50}
+              cy="50%"
+              outerRadius={80}
+              innerRadius={45}
               dataKey="value"
               paddingAngle={2}
               label={({ name, percent }) =>

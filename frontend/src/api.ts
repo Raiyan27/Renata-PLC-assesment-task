@@ -10,7 +10,9 @@ const BASE = "http://localhost:8000/api";
 
 function buildParams(filters: Filters): string {
   const params = new URLSearchParams();
-  if (filters.reason) params.set("reason", filters.reason);
+  if (filters.reason && filters.reason.length > 0) {
+    filters.reason.forEach(r => params.append("reason", r));
+  }
   if (filters.dateFrom) params.set("date_from", filters.dateFrom);
   if (filters.dateTo) params.set("date_to", filters.dateTo);
   if (filters.validOnly) params.set("valid_only", "true");

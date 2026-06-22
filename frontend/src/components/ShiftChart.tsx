@@ -21,6 +21,41 @@ interface Props {
   categories: string[];
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-lg shadow-md p-3 text-sm min-w-[160px]">
+        <p className="font-semibold text-slate-800 mb-2">{label}</p>
+        {payload.map((entry: any, index: number) => {
+          const original = entry.payload.original[entry.dataKey];
+          const timeText = (original && original.start && original.end) 
+            ? `${original.start} to ${original.end}` 
+            : null;
+            
+          return (
+            <div key={index} className="mb-2 last:mb-0">
+              <div className="flex items-center justify-between gap-4">
+                <span style={{ color: entry.color }} className="font-medium">
+                  {entry.name}
+                </span>
+                <span className="font-bold text-slate-700">
+                  {entry.value.toFixed(1)}h
+                </span>
+              </div>
+              {timeText && (
+                <div className="text-[11px] text-slate-400 mt-0.5 font-medium tracking-wide">
+                  {timeText}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function ShiftChart({ data, categories }: Props) {
   if (!data.length) {
     return (
@@ -30,10 +65,27 @@ export default function ShiftChart({ data, categories }: Props) {
     );
   }
 
-  const chartData = data.map((d) => ({
-    date: d.date.slice(5),
-    ...d.categories,
-  }));
+  const chartData = data.map((d) => {
+    const [year, month, day] = d.date.split("-");
+    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    const formattedDate = dateObj.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    }).replace(/ /g, "-");
+    
+    // Flatten data for Recharts, keeping original object for the tooltip
+    const row: any = { 
+      date: formattedDate,
+      original: d.categories 
+    };
+    
+    Object.keys(d.categories).forEach(cat => {
+      row[cat] = d.categories[cat].hours;
+    });
+    
+    return row;
+  });
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm mt-6">
@@ -53,15 +105,7 @@ export default function ShiftChart({ data, categories }: Props) {
               fill: "#64748b",
             }}
           />
-          <Tooltip
-            contentStyle={{
-              background: "#ffffff",
-              border: "1px solid #e2e8f0",
-              borderRadius: 8,
-              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-              color: "#334155",
-            }}
-          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
           <Legend />
           {categories.map((cat, i) => (
             <Bar

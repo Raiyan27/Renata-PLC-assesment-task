@@ -21,10 +21,16 @@ export interface CategorySummary {
   count: number;
 }
 
+export interface CategoryTimeSummary {
+  hours: number;
+  start: string | null;
+  end: string | null;
+}
+
 export interface DailySummary {
   date: string;
   total_hours: number;
-  categories: Record<string, number>;
+  categories: Record<string, CategoryTimeSummary>;
 }
 
 export interface AnalyticsSummary {
@@ -78,7 +84,7 @@ export interface QualityResponse {
 }
 
 export interface Filters {
-  reason?: string;
+  reason?: string[];
   dateFrom?: string;
   dateTo?: string;
   validOnly?: boolean;
