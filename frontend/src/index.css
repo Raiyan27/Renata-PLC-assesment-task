@@ -5,6 +5,7 @@
 @layer base {
   body {
     font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f1f5f9;
   }
   button {
     cursor: pointer;

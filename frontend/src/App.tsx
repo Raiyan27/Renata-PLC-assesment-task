@@ -73,7 +73,7 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen bg-slate-50">
+      <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen">
         <header className="mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
             Shift Analytics Dashboard
@@ -103,7 +103,7 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen bg-slate-50">
+    <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen">
       <header className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
