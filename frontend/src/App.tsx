@@ -51,23 +51,31 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="app">
-        <header>
-          <h1>Shift Analytics Dashboard</h1>
+      <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen bg-slate-50">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
+            Shift Analytics Dashboard
+          </h1>
         </header>
-        <div className="error-banner">
-          <p>Error: {error}</p>
-          <p>Make sure the backend is running on http://localhost:8000</p>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+          <p className="text-red-600 font-medium">Error: {error}</p>
+          <p className="text-slate-500 text-sm mt-2">
+            Make sure the backend is running on http://localhost:8000
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="app">
-      <header>
-        <h1>Shift Analytics Dashboard</h1>
-        <p className="subtitle">Operational performance analysis & insights</p>
+    <div className="max-w-[1100px] mx-auto px-6 py-8 pb-16 min-h-screen bg-slate-50">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
+          Shift Analytics Dashboard
+        </h1>
+        <p className="text-slate-500 text-[0.95rem] mt-1">
+          Operational performance analysis &amp; insights
+        </p>
       </header>
 
       <FilterBar
@@ -77,10 +85,12 @@ export default function App() {
       />
 
       {loading ? (
-        <div className="loading">Loading data...</div>
+        <div className="text-center py-12 text-slate-400 text-base">
+          Loading data...
+        </div>
       ) : (
         <>
-          <div className="grid-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EfficiencyScore data={efficiency} />
             <CategoryBreakdown data={summary?.by_category || []} />
           </div>

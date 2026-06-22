@@ -92,6 +92,12 @@ function generateInsights(
   return insights;
 }
 
+const severityStyles: Record<string, string> = {
+  high: "border-l-red-500 bg-red-50/60",
+  medium: "border-l-amber-500 bg-amber-50/60",
+  info: "border-l-indigo-500 bg-indigo-50/60",
+};
+
 export default function Insights({ summary, efficiency, quality }: Props) {
   if (!summary || !efficiency || !quality) return null;
 
@@ -99,23 +105,35 @@ export default function Insights({ summary, efficiency, quality }: Props) {
 
   if (insights.length === 0) {
     return (
-      <div className="card empty">
-        <h2>Operational Insights</h2>
+      <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
+        <h2 className="text-lg font-semibold mb-4 text-slate-800">
+          Operational Insights
+        </h2>
         <p>Not enough data to generate insights.</p>
       </div>
     );
   }
 
   return (
-    <div className="card">
-      <h2>Operational Insights</h2>
-      <div className="insights-list">
+    <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
+      <h2 className="text-lg font-semibold mb-4 text-slate-800">
+        Operational Insights
+      </h2>
+      <div className="flex flex-col gap-4">
         {insights.map((ins, i) => (
-          <div key={i} className={`insight insight-${ins.severity}`}>
-            <h3>{ins.title}</h3>
-            <p>{ins.description}</p>
-            <p className="insight-action">
-              <strong>Recommended action:</strong> {ins.action}
+          <div
+            key={i}
+            className={`p-4 px-5 rounded-lg border-l-4 ${severityStyles[ins.severity]}`}
+          >
+            <h3 className="text-[0.95rem] font-semibold mb-1.5 text-slate-800">
+              {ins.title}
+            </h3>
+            <p className="text-sm text-slate-500 my-1">
+              {ins.description}
+            </p>
+            <p className="text-sm text-slate-500 mt-2">
+              <strong className="text-slate-600">Recommended action:</strong>{" "}
+              {ins.action}
             </p>
           </div>
         ))}

@@ -23,7 +23,11 @@ interface Props {
 
 export default function ShiftChart({ data, categories }: Props) {
   if (!data.length) {
-    return <div className="card empty">No shift data to display.</div>;
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
+        No shift data to display.
+      </div>
+    );
   }
 
   const chartData = data.map((d) => ({
@@ -32,26 +36,30 @@ export default function ShiftChart({ data, categories }: Props) {
   }));
 
   return (
-    <div className="card">
-      <h2>Shift Activity by Date</h2>
+    <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm mt-6">
+      <h2 className="text-lg font-semibold mb-4 text-slate-800">
+        Shift Activity by Date
+      </h2>
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-          <XAxis dataKey="date" tick={{ fill: "#aaa", fontSize: 12 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 12 }} />
           <YAxis
-            tick={{ fill: "#aaa", fontSize: 12 }}
+            tick={{ fill: "#64748b", fontSize: 12 }}
             label={{
               value: "Hours",
               angle: -90,
               position: "insideLeft",
-              fill: "#aaa",
+              fill: "#64748b",
             }}
           />
           <Tooltip
             contentStyle={{
-              background: "#1e1e2e",
-              border: "1px solid #333",
+              background: "#ffffff",
+              border: "1px solid #e2e8f0",
               borderRadius: 8,
+              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+              color: "#334155",
             }}
           />
           <Legend />
