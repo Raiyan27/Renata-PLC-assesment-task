@@ -86,32 +86,36 @@ export default function ShiftChart({ data, categories }: Props) {
       <h2 className="text-lg font-semibold mb-4 text-slate-800">
         Shift Activity by Date
       </h2>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-          <XAxis dataKey="date" tickFormatter={(val) => formatDate(val)} tick={{ fill: "#64748b", fontSize: 12 }} />
-          <YAxis
-            tick={{ fill: "#64748b", fontSize: 12 }}
-            label={{
-              value: "Hours",
-              angle: -90,
-              position: "insideLeft",
-              fill: "#64748b",
-            }}
-          />
-          <Tooltip content={<CustomTooltip formatTime={formatTime} formatDate={formatDate} />} cursor={{ fill: '#f8fafc' }} />
-          <Legend />
-          {categories.map((cat, i) => (
-            <Bar
-              key={cat}
-              dataKey={cat}
-              stackId="a"
-              fill={COLORS[i % COLORS.length]}
-              radius={i === categories.length - 1 ? [4, 4, 0, 0] : undefined}
-            />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-slate-100 pb-2">
+        <div style={{ minWidth: chartData.length > 25 ? `${chartData.length * 40}px` : '100%', height: 350 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="date" tickFormatter={(val) => formatDate(val)} tick={{ fill: "#64748b", fontSize: 12 }} />
+              <YAxis
+                tick={{ fill: "#64748b", fontSize: 12 }}
+                label={{
+                  value: "Hours",
+                  angle: -90,
+                  position: "insideLeft",
+                  fill: "#64748b",
+                }}
+              />
+              <Tooltip content={<CustomTooltip formatTime={formatTime} formatDate={formatDate} />} cursor={{ fill: '#f8fafc' }} />
+              <Legend />
+              {categories.map((cat, i) => (
+                <Bar
+                  key={cat}
+                  dataKey={cat}
+                  stackId="a"
+                  fill={COLORS[i % COLORS.length]}
+                  radius={i === categories.length - 1 ? [4, 4, 0, 0] : undefined}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }

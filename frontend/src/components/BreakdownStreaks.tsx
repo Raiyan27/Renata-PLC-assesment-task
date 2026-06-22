@@ -22,9 +22,10 @@ export default function BreakdownStreaks({ data }: Props) {
     }
     return (
       <div className="flex flex-col">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr>
+        <div className="overflow-y-auto max-h-[250px] relative">
+          <table className="w-full border-collapse text-sm">
+            <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_2px_rgba(0,0,0,0.05)] outline outline-1 outline-slate-200">
+              <tr>
               <th className="text-left px-3 py-2 border-b border-slate-200 text-slate-500 font-semibold text-[11px] uppercase tracking-wide">
                 Period
               </th>
@@ -65,7 +66,7 @@ export default function BreakdownStreaks({ data }: Props) {
               </tr>
             ))}
           </tbody>
-          <tfoot className="bg-slate-50/80 border-t border-slate-200">
+          <tfoot className="sticky bottom-0 bg-slate-50 border-t border-slate-200 z-10 shadow-[0_-1px_2px_rgba(0,0,0,0.05)] outline outline-1 outline-slate-200">
             <tr>
               <td className="px-3 py-2.5 text-xs font-semibold text-slate-600 uppercase tracking-wide">
                 Totals:
@@ -79,6 +80,7 @@ export default function BreakdownStreaks({ data }: Props) {
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
     );
   };

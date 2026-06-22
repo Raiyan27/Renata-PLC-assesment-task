@@ -18,6 +18,7 @@ const ISSUE_LABELS: Record<string, string> = {
   end_before_start: "End before start",
   date_inferred_from_start: "Date inferred from start",
   missing_reason: "Missing reason",
+  duplicate_record: "Duplicate record",
 };
 
 function formatIssue(issue: string): string {
@@ -81,21 +82,21 @@ export default function DataQuality({ data }: Props) {
               </tr>
             </thead>
             <tbody>
-              {data.issue_summary.map((issue) => (
-                <tr
-                  key={issue.issue_type}
-                  className="hover:bg-slate-50 transition-colors duration-150"
-                >
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {formatIssue(issue.issue_type)}
-                  </td>
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {issue.count}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                {data.issue_summary.map((issue) => (
+                  <tr
+                    key={issue.issue_type}
+                    className="hover:bg-slate-50 transition-colors duration-150"
+                  >
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {formatIssue(issue.issue_type)}
+                    </td>
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {issue.count}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
         </>
       )}
 
@@ -104,58 +105,60 @@ export default function DataQuality({ data }: Props) {
           <h3 className="text-[0.95rem] font-semibold mt-5 mb-3 text-slate-500">
             Flagged Records
           </h3>
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th className="text-left px-3 py-2.5 border-b-2 border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
-                  ID
-                </th>
-                <th className="text-left px-3 py-2.5 border-b-2 border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
-                  Date
-                </th>
-                <th className="text-left px-3 py-2.5 border-b-2 border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
-                  Reason
-                </th>
-                <th className="text-left px-3 py-2.5 border-b-2 border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
-                  Hours
-                </th>
-                <th className="text-left px-3 py-2.5 border-b-2 border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
-                  Issues
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.flagged.map((r) => (
-                <tr
-                  key={r.id}
-                  className="hover:bg-slate-50 transition-colors duration-150"
-                >
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {r.id}
-                  </td>
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {r.day_date || "—"}
-                  </td>
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {r.reason}
-                  </td>
-                  <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
-                    {r.reported_hours ?? "—"}
-                  </td>
-                  <td className="px-3 py-2.5 border-b border-slate-100">
-                    {r.issues.map((issue, i) => (
-                      <span
-                        key={i}
-                        className="inline-block px-2 py-0.5 bg-red-100 text-red-600 rounded text-xs mr-1 mb-0.5"
-                      >
-                        {formatIssue(issue)}
-                      </span>
-                    ))}
-                  </td>
+          <div className="overflow-y-auto max-h-[400px] border border-slate-200 rounded-lg relative">
+            <table className="w-full border-collapse text-sm">
+              <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_2px_rgba(0,0,0,0.05)] outline outline-1 outline-slate-200">
+                <tr>
+                  <th className="text-left px-3 py-2.5 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
+                    ID
+                  </th>
+                  <th className="text-left px-3 py-2.5 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
+                    Date
+                  </th>
+                  <th className="text-left px-3 py-2.5 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
+                    Reason
+                  </th>
+                  <th className="text-left px-3 py-2.5 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
+                    Hours
+                  </th>
+                  <th className="text-left px-3 py-2.5 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wide">
+                    Issues
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.flagged.map((r) => (
+                  <tr
+                    key={r.id}
+                    className="hover:bg-slate-50 transition-colors duration-150"
+                  >
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {r.id}
+                    </td>
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {r.day_date || "—"}
+                    </td>
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {r.reason}
+                    </td>
+                    <td className="px-3 py-2.5 border-b border-slate-100 text-slate-700">
+                      {r.reported_hours ?? "—"}
+                    </td>
+                    <td className="px-3 py-2.5 border-b border-slate-100">
+                      {r.issues.map((issue, i) => (
+                        <span
+                          key={i}
+                          className="inline-block px-2 py-0.5 bg-red-100 text-red-600 rounded text-xs mr-1 mb-0.5"
+                        >
+                          {formatIssue(issue)}
+                        </span>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

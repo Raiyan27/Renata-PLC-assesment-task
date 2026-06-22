@@ -41,14 +41,10 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
     });
   };
 
-  const toggleAllReasons = () => {
-    if (allSelected || selectedReasons.length === 0) {
-      // Deselect all
-      onChange({ ...filters, reason: [] });
-    } else {
-      // Select all (implicitly all categories)
-      onChange({ ...filters, reason: undefined });
-    }
+
+
+  const selectAllReasons = () => {
+    onChange({ ...filters, reason: undefined });
   };
 
   const clearFilters = () => {
@@ -94,11 +90,11 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
               <input
                 type="checkbox"
                 checked={allSelected || selectedReasons.length === 0}
-                onChange={toggleAllReasons}
+                onChange={selectAllReasons}
                 className="w-4 h-4 accent-indigo-500 rounded cursor-pointer"
               />
               <span className="text-sm font-semibold text-slate-700">
-                {(allSelected || selectedReasons.length === 0) ? "Deselect All" : "Select All"}
+                Select All
               </span>
             </label>
             {categories.map((c) => (

@@ -34,11 +34,7 @@ def get_quality():
                 )
             )
 
-    # Count duplicates removed (from CSV total vs DB total)
-    import pandas as pd
-    from database import CSV_PATH, detect_duplicates
-    df = pd.read_csv(str(CSV_PATH), keep_default_na=False)
-    duplicates_removed = len(detect_duplicates(df))
+    duplicates_removed = issue_counter.get("duplicate_record", 0)
 
     return QualityResponse(
         total_records=total,

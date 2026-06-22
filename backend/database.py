@@ -141,10 +141,14 @@ def init_db():
     """)
 
     for idx, row in df.iterrows():
-        if idx in duplicate_indices:
-            continue
+        cleaned, issues = validate_row(row.to_dict())
 
-        cleaned, _ = validate_row(row.to_dict())
+        if idx in duplicate_indices:
+            cleaned["is_valid"] = False
+            if cleaned["issues"]:
+                cleaned["issues"] += ",duplicate_record"
+            else:
+                cleaned["issues"] = "duplicate_record"
         conn.execute(
             """INSERT INTO shifts (day_date, start_time, end_time, reported_hours,
                computed_hours, reason, is_valid, issues)
