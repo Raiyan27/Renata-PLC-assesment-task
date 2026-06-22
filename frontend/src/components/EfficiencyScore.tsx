@@ -1,10 +1,12 @@
 import type { EfficiencyResponse } from "../types";
+import { useFormat } from "../FormatContext";
 
 interface Props {
   data: EfficiencyResponse | null;
 }
 
 export default function EfficiencyScore({ data }: Props) {
+  const { formatTime } = useFormat();
   if (!data) return null;
 
   const { efficiency_score, productive_hours, total_hours, failure_categories } =
@@ -31,7 +33,7 @@ export default function EfficiencyScore({ data }: Props) {
             Productive
           </span>
           <span className="text-lg font-semibold text-slate-800">
-            {productive_hours.toFixed(1)}h
+            {formatTime(productive_hours)}
           </span>
         </div>
         <div className="flex flex-col">
@@ -39,7 +41,7 @@ export default function EfficiencyScore({ data }: Props) {
             Total
           </span>
           <span className="text-lg font-semibold text-slate-800">
-            {total_hours.toFixed(1)}h
+            {formatTime(total_hours)}
           </span>
         </div>
         <div className="flex flex-col">
@@ -47,7 +49,7 @@ export default function EfficiencyScore({ data }: Props) {
             Non-productive
           </span>
           <span className="text-lg font-semibold text-slate-800">
-            {(total_hours - productive_hours).toFixed(1)}h
+            {formatTime(total_hours - productive_hours)}
           </span>
         </div>
       </div>

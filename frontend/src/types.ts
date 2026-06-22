@@ -53,10 +53,12 @@ export interface Streak {
   end_date: string;
   events: number;
   total_hours: number;
+  days?: number;
 }
 
 export interface StreakResponse {
-  streaks: Streak[];
+  chained_streaks: Streak[];
+  consecutive_days_streaks: Streak[];
   total_breakdown_hours: number;
   assumption: string;
 }

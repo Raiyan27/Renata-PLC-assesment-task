@@ -7,6 +7,7 @@ import {
   Legend,
 } from "recharts";
 import type { CategorySummary } from "../types";
+import { useFormat } from "../FormatContext";
 
 const COLORS = [
   "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6",
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function CategoryBreakdown({ data }: Props) {
+  const { formatTime } = useFormat();
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
@@ -65,7 +67,7 @@ export default function CategoryBreakdown({ data }: Props) {
                 boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 color: "#334155",
               }}
-              formatter={((value: number) => [`${value}h`, "Hours"]) as never}
+              formatter={((value: number) => [formatTime(value), "Duration"]) as never}
             />
             <Legend
               wrapperStyle={{ paddingTop: "16px" }}

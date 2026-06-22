@@ -50,10 +50,12 @@ class Streak(BaseModel):
     end_date: str
     events: int
     total_hours: float
+    days: int | None = None
 
 
 class StreakResponse(BaseModel):
-    streaks: list[Streak]
+    chained_streaks: list[Streak]
+    consecutive_days_streaks: list[Streak]
     total_breakdown_hours: float
     assumption: str
 

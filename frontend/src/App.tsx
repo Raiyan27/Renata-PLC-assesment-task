@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type {
   Filters,
   AnalyticsSummary,
@@ -24,13 +24,13 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (currentFilters: Filters) => {
     setLoading(true);
     setError(null);
     try {
       const [s, e, st, q] = await Promise.all([
-        fetchSummary(filters),
-        fetchEfficiency(filters),
+        fetchSummary(currentFilters),
+        fetchEfficiency(currentFilters),
         fetchStreaks(),
         fetchQuality(),
       ]);
@@ -43,11 +43,21 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
+
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (isFirstLoad.current) {
+      loadData(filters);
+      isFirstLoad.current = false;
+      return;
+    }
+    const handler = setTimeout(() => {
+      loadData(filters);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [filters, loadData]);
 
   if (error) {
     return (
@@ -84,12 +94,20 @@ export default function App() {
         categories={summary?.categories || []}
       />
 
-      {loading ? (
+      {filters.reason && filters.reason.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 px-4 bg-white border border-slate-200 rounded-xl mb-6 shadow-sm">
+          <svg className="w-12 h-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <p className="text-slate-600 font-medium text-lg">No categories selected</p>
+          <p className="text-sm text-slate-400 mt-1">Please select at least one category to view analytics.</p>
+        </div>
+      ) : summary === null ? (
         <div className="text-center py-12 text-slate-400 text-base">
           Loading data...
         </div>
       ) : (
-        <>
+        <div className={`transition-opacity duration-300 ease-in-out ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EfficiencyScore data={efficiency} />
             <CategoryBreakdown data={summary?.by_category || []} />
@@ -109,7 +127,7 @@ export default function App() {
           />
 
           <DataQuality data={quality} />
-        </>
+        </div>
       )}
     </div>
   );

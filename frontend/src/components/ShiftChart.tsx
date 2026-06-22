@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { DailySummary } from "../types";
+import { useFormat } from "../FormatContext";
 
 const COLORS = [
   "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6",
@@ -21,11 +22,11 @@ interface Props {
   categories: string[];
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-lg shadow-md p-3 text-sm min-w-[160px]">
-        <p className="font-semibold text-slate-800 mb-2">{label}</p>
+        <p className="font-semibold text-slate-800 mb-2">{formatDate(label)}</p>
         {payload.map((entry: any, index: number) => {
           const original = entry.payload.original[entry.dataKey];
           const timeText = (original && original.start && original.end) 
@@ -39,7 +40,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   {entry.name}
                 </span>
                 <span className="font-bold text-slate-700">
-                  {entry.value.toFixed(1)}h
+                  {formatTime(entry.value)}
                 </span>
               </div>
               {timeText && (
@@ -57,6 +58,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function ShiftChart({ data, categories }: Props) {
+  const { formatTime, formatDate } = useFormat();
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
@@ -66,17 +68,9 @@ export default function ShiftChart({ data, categories }: Props) {
   }
 
   const chartData = data.map((d) => {
-    const [year, month, day] = d.date.split("-");
-    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    const formattedDate = dateObj.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "2-digit",
-    }).replace(/ /g, "-");
-    
     // Flatten data for Recharts, keeping original object for the tooltip
     const row: any = { 
-      date: formattedDate,
+      date: d.date,
       original: d.categories 
     };
     
@@ -95,7 +89,7 @@ export default function ShiftChart({ data, categories }: Props) {
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-          <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 12 }} />
+          <XAxis dataKey="date" tickFormatter={(val) => formatDate(val)} tick={{ fill: "#64748b", fontSize: 12 }} />
           <YAxis
             tick={{ fill: "#64748b", fontSize: 12 }}
             label={{
@@ -105,7 +99,7 @@ export default function ShiftChart({ data, categories }: Props) {
               fill: "#64748b",
             }}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
+          <Tooltip content={<CustomTooltip formatTime={formatTime} formatDate={formatDate} />} cursor={{ fill: '#f8fafc' }} />
           <Legend />
           {categories.map((cat, i) => (
             <Bar

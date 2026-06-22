@@ -1,4 +1,5 @@
 import type { AnalyticsSummary, EfficiencyResponse, QualityResponse } from "../types";
+import { useFormat } from "../FormatContext";
 
 interface Props {
   summary: AnalyticsSummary | null;
@@ -16,7 +17,9 @@ interface Insight {
 function generateInsights(
   summary: AnalyticsSummary,
   efficiency: EfficiencyResponse,
-  quality: QualityResponse
+  quality: QualityResponse,
+  formatTime: (val: number | string) => string,
+  formatDate: (val: string) => string
 ): Insight[] {
   const insights: Insight[] = [];
 
@@ -36,7 +39,7 @@ function generateInsights(
     const worst = failureDays[0];
     insights.push({
       title: "Peak Failure Day",
-      description: `${worst.date} had ${worst.failureHours.toFixed(1)} hours of failures (${efficiency.failure_categories.join(", ")}).`,
+      description: `${formatDate(worst.date)} had ${formatTime(worst.failureHours)} of failures (${efficiency.failure_categories.join(", ")}).`,
       action:
         "Schedule preventive maintenance before this recurring period. Investigate root causes for this date.",
       severity: "high",
@@ -53,7 +56,7 @@ function generateInsights(
     const pct = ((top.total_hours / summary.total_hours) * 100).toFixed(1);
     insights.push({
       title: `${top.reason} is the Leading Failure`,
-      description: `${top.reason} accounts for ${top.total_hours.toFixed(1)}h (${pct}% of total hours) across ${top.count} events.`,
+      description: `${top.reason} accounts for ${formatTime(top.total_hours)} (${pct}% of total hours) across ${top.count} events.`,
       action: `Prioritize ${top.reason.toLowerCase()} reduction initiatives. Consider equipment upgrades or predictive maintenance.`,
       severity: "high",
     });
@@ -83,7 +86,7 @@ function generateInsights(
     const top = productive[0];
     insights.push({
       title: `${top.reason} Dominates Productive Time`,
-      description: `${top.reason} is the top productive activity with ${top.total_hours.toFixed(1)}h across ${top.count} shifts.`,
+      description: `${top.reason} is the top productive activity with ${formatTime(top.total_hours)} across ${top.count} shifts.`,
       action: `Evaluate if ${top.reason.toLowerCase()} time can be optimized or if resources are appropriately allocated.`,
       severity: "info",
     });
@@ -99,9 +102,10 @@ const severityStyles: Record<string, string> = {
 };
 
 export default function Insights({ summary, efficiency, quality }: Props) {
+  const { formatTime, formatDate } = useFormat();
   if (!summary || !efficiency || !quality) return null;
 
-  const insights = generateInsights(summary, efficiency, quality);
+  const insights = generateInsights(summary, efficiency, quality, formatTime, formatDate);
 
   if (insights.length === 0) {
     return (
