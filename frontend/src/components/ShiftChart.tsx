@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -20,6 +21,7 @@ const COLORS = [
 interface Props {
   data: DailySummary[];
   categories: string[];
+  failureCategories?: string[];
 }
 
 const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) => {
@@ -57,8 +59,9 @@ const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) 
   return null;
 };
 
-export default function ShiftChart({ data, categories }: Props) {
+export default function ShiftChart({ data, categories, failureCategories }: Props) {
   const { formatTime, formatDate } = useFormat();
+  const [highlightDowntime, setHighlightDowntime] = useState(false);
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
@@ -83,13 +86,27 @@ export default function ShiftChart({ data, categories }: Props) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 mb-6 shadow-sm mt-6">
-      <h2 className="text-lg font-semibold mb-4 text-slate-800">
-        Shift Activity by Date
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-slate-800">
+          Shift Activity by Date
+        </h2>
+        {failureCategories && failureCategories.length > 0 && (
+          <button
+            onClick={() => setHighlightDowntime(!highlightDowntime)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
+              highlightDowntime 
+                ? "bg-rose-100 text-rose-700 hover:bg-rose-200" 
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            {highlightDowntime ? "Clear Highlight" : "Highlight Downtime"}
+          </button>
+        )}
+      </div>
       <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-slate-100 pb-2">
         <div style={{ minWidth: `max(100%, ${chartData.length * 45}px)`, height: 350 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis 
                 dataKey="date" 
@@ -120,7 +137,11 @@ export default function ShiftChart({ data, categories }: Props) {
                   key={cat}
                   dataKey={cat}
                   stackId="a"
-                  fill={COLORS[i % COLORS.length]}
+                  fill={
+                    highlightDowntime && failureCategories && !failureCategories.includes(cat)
+                      ? "#e2e8f0" // Dim color
+                      : COLORS[i % COLORS.length]
+                  }
                   stroke="#ffffff"
                   strokeWidth={1.5}
                   className="hover:brightness-110 transition-all"

@@ -51,6 +51,8 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
     onChange({});
   };
 
+  const hasFilters = (filters.reason && filters.reason.length > 0) || filters.dateFrom || filters.dateTo;
+
   return (
     <div className="flex flex-wrap items-center gap-4 p-4 px-5 bg-white border border-slate-200 rounded-xl mb-6 shadow-sm relative z-20">
       {/* Category Dropdown */}
@@ -184,6 +186,14 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
                 className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 text-sm outline-none w-full cursor-pointer focus:border-indigo-500"
               />
             </div>
+            {(filters.dateFrom || filters.dateTo) && (
+              <button
+                onClick={() => onChange({ ...filters, dateFrom: undefined, dateTo: undefined })}
+                className="mt-1 w-full px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors"
+              >
+                Clear Dates
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -228,14 +238,16 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
       </div>
 
       {/* Clear Filters Button */}
-      <div className="flex-1 flex justify-end items-center h-full mt-auto pt-4">
-        <button
-          onClick={clearFilters}
-          className="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 transition-colors rounded-lg font-medium"
-        >
-          Clear Filters
-        </button>
-      </div>
+      {hasFilters && (
+        <div className="flex-1 flex justify-end items-center h-full mt-auto pt-4">
+          <button
+            onClick={clearFilters}
+            className="px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 transition-colors rounded-lg font-medium"
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
     </div>
   );
 }

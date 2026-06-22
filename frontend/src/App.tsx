@@ -20,6 +20,8 @@ import BreakdownStreaks from "./components/BreakdownStreaks";
 import Insights from "./components/Insights";
 import DataQuality from "./components/DataQuality";
 import UploadModal from "./components/UploadModal";
+import ParetoChart from "./components/ParetoChart";
+import EfficiencyTrend from "./components/EfficiencyTrend";
 import { refreshDefaultDataset } from "./api";
 
 export default function App() {
@@ -192,13 +194,19 @@ export default function App() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EfficiencyScore data={efficiency} />
-            <CategoryBreakdown data={summary?.by_category || []} />
+            <CategoryBreakdown data={summary?.by_category || []} failureCategories={efficiency?.failure_categories || []} />
           </div>
 
           <ShiftChart
             data={summary?.by_date || []}
             categories={summary?.categories || []}
+            failureCategories={efficiency?.failure_categories || []}
           />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <EfficiencyTrend data={summary?.by_date || []} failureCategories={efficiency?.failure_categories || []} />
+            <ParetoChart data={summary?.by_category || []} failureCategories={efficiency?.failure_categories || []} />
+          </div>
 
           <BreakdownStreaks data={streaks} />
 

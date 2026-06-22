@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   PieChart,
   Pie,
@@ -17,10 +18,12 @@ const COLORS = [
 
 interface Props {
   data: CategorySummary[];
+  failureCategories?: string[];
 }
 
-export default function CategoryBreakdown({ data }: Props) {
+export default function CategoryBreakdown({ data, failureCategories }: Props) {
   const { formatTime } = useFormat();
+  const [highlightDowntime, setHighlightDowntime] = useState(false);
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center flex items-center justify-center min-h-[200px]">
@@ -38,9 +41,23 @@ export default function CategoryBreakdown({ data }: Props) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
-      <h2 className="text-lg font-semibold mb-6 text-slate-800">
-        Hours by Category
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold text-slate-800">
+          Hours by Category
+        </h2>
+        {failureCategories && failureCategories.length > 0 && (
+          <button
+            onClick={() => setHighlightDowntime(!highlightDowntime)}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
+              highlightDowntime 
+                ? "bg-rose-100 text-rose-700 hover:bg-rose-200" 
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            {highlightDowntime ? "Clear Highlight" : "Highlight Downtime"}
+          </button>
+        )}
+      </div>
       <div className="relative flex items-center justify-center">
         {/* Center Text for Donut Chart */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-[40px]">
@@ -66,8 +83,16 @@ export default function CategoryBreakdown({ data }: Props) {
               cornerRadius={4}
               label={false}
             >
-              {chartData.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} className="hover:opacity-80 transition-opacity outline-none" />
+              {chartData.map((entry, i) => (
+                <Cell 
+                  key={i} 
+                  fill={
+                    highlightDowntime && failureCategories && !failureCategories.includes(entry.name)
+                      ? "#e2e8f0" 
+                      : COLORS[i % COLORS.length]
+                  } 
+                  className="hover:opacity-80 transition-opacity outline-none" 
+                />
               ))}
             </Pie>
             <Tooltip

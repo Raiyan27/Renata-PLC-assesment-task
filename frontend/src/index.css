@@ -6,6 +6,12 @@
   body {
     font-family: 'Inter', -apple-system, sans-serif;
   }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
 }
 
 /* Recharts overrides */
