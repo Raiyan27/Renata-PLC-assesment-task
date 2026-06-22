@@ -120,8 +120,15 @@ def detect_duplicates(df: pd.DataFrame) -> set[int]:
     return duplicates
 
 
-def init_db():
-    df = pd.read_csv(str(CSV_PATH), keep_default_na=False)
+def init_db(df: pd.DataFrame | None = None):
+    if df is None:
+        df = pd.read_csv(str(CSV_PATH), keep_default_na=False)
+    
+    # Normalize headers just in case
+    df = df.rename(columns=lambda x: str(x).upper().strip())
+    # Fill NaN to emulate keep_default_na=False if it came from excel
+    df = df.fillna("")
+    
     duplicate_indices = detect_duplicates(df)
 
     conn = get_db()

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database import init_db
-from routes import shifts, analytics, streaks, quality
+from routes import shifts, analytics, streaks, quality, upload
 
 
 @asynccontextmanager
@@ -24,3 +24,4 @@ app.include_router(shifts.router)
 app.include_router(analytics.router)
 app.include_router(streaks.router)
 app.include_router(quality.router)
+app.include_router(upload.router)

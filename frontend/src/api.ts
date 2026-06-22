@@ -20,7 +20,7 @@ function buildParams(filters: Filters): string {
 }
 
 async function fetchJSON<T>(url: string): Promise<T> {
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -45,4 +45,30 @@ export function fetchStreaks() {
 
 export function fetchQuality() {
   return fetchJSON<QualityResponse>(`${BASE}/data-quality`);
+}
+
+export async function uploadDataset(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  const res = await fetch(`${BASE}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.detail || `Upload failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function refreshDefaultDataset() {
+  const res = await fetch(`${BASE}/refresh-default`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    throw new Error(`Refresh failed: ${res.status}`);
+  }
+  return res.json();
 }
