@@ -188,23 +188,7 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
         )}
       </div>
 
-      <div className="flex flex-col gap-1 ml-2 pl-4 border-l border-slate-200">
-        <label
-          htmlFor="filter-valid"
-          className="flex items-center gap-2 text-[13px] font-medium text-slate-700 cursor-pointer pt-0"
-        >
-          <input
-            id="filter-valid"
-            type="checkbox"
-            checked={filters.validOnly || false}
-            onChange={(e) =>
-              onChange({ ...filters, validOnly: e.target.checked })
-            }
-            className="w-4 h-4 accent-indigo-500 cursor-pointer rounded"
-          />
-          Valid records only
-        </label>
-      </div>
+
 
       <div className="flex items-center gap-4 ml-2 pl-4 border-l border-slate-200 h-full pt-1">
         <div className="flex flex-col gap-1">

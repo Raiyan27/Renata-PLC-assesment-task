@@ -25,8 +25,8 @@ interface Props {
 const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-slate-200 rounded-lg shadow-md p-3 text-sm min-w-[160px]">
-        <p className="font-semibold text-slate-800 mb-2">{formatDate(label)}</p>
+      <div className="bg-white border border-slate-100 rounded-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),_0_4px_6px_-4px_rgba(0,0,0,0.1)] p-4 text-sm min-w-[180px]">
+        <p className="font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">{formatDate(label)}</p>
         {payload.map((entry: any, index: number) => {
           const original = entry.payload.original[entry.dataKey];
           const timeText = (original && original.start && original.end) 
@@ -82,34 +82,48 @@ export default function ShiftChart({ data, categories }: Props) {
   });
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm mt-6">
+    <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 mb-6 shadow-sm mt-6">
       <h2 className="text-lg font-semibold mb-4 text-slate-800">
         Shift Activity by Date
       </h2>
       <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-slate-100 pb-2">
-        <div style={{ minWidth: chartData.length > 25 ? `${chartData.length * 40}px` : '100%', height: 350 }}>
+        <div style={{ minWidth: `max(100%, ${chartData.length * 45}px)`, height: 350 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="date" tickFormatter={(val) => formatDate(val)} tick={{ fill: "#64748b", fontSize: 12 }} />
-              <YAxis
-                tick={{ fill: "#64748b", fontSize: 12 }}
-                label={{
-                  value: "Hours",
-                  angle: -90,
-                  position: "insideLeft",
-                  fill: "#64748b",
-                }}
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(val) => formatDate(val)} 
+                tick={{ fill: "#64748b", fontSize: 12, fontWeight: 500 }} 
+                axisLine={false}
+                tickLine={false}
+                tickMargin={10}
               />
-              <Tooltip content={<CustomTooltip formatTime={formatTime} formatDate={formatDate} />} cursor={{ fill: '#f8fafc' }} />
-              <Legend />
+              <YAxis
+                tick={{ fill: "#64748b", fontSize: 12, fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                tickMargin={10}
+              />
+              <Tooltip 
+                content={<CustomTooltip formatTime={formatTime} formatDate={formatDate} />} 
+                cursor={{ fill: 'rgba(241, 245, 249, 0.4)' }} 
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                wrapperStyle={{ paddingTop: "20px", fontSize: "13px", fontWeight: 500, color: "#475569" }}
+                iconType="circle"
+                iconSize={10}
+              />
               {categories.map((cat, i) => (
                 <Bar
                   key={cat}
                   dataKey={cat}
                   stackId="a"
                   fill={COLORS[i % COLORS.length]}
-                  radius={i === categories.length - 1 ? [4, 4, 0, 0] : undefined}
+                  stroke="#ffffff"
+                  strokeWidth={1.5}
+                  className="hover:brightness-110 transition-all"
                 />
               ))}
             </BarChart>

@@ -15,7 +15,7 @@ function buildParams(filters: Filters): string {
   }
   if (filters.dateFrom) params.set("date_from", filters.dateFrom);
   if (filters.dateTo) params.set("date_to", filters.dateTo);
-  if (filters.validOnly) params.set("valid_only", "true");
+
   return params.toString();
 }
 

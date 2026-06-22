@@ -89,5 +89,4 @@ export interface Filters {
   reason?: string[];
   dateFrom?: string;
   dateTo?: string;
-  validOnly?: boolean;
 }
