@@ -76,6 +76,13 @@ Frontend runs at http://localhost:5173.
 - **Dynamic Dataset Recovery**: A one-click "Refresh/Restore Default Dataset" mechanism immediately wipes custom data and re-reads the underlying local dataset, keeping the app strictly in sync with filesystem edits.
 - **Smart Filtering**: Interactively slice the data by specific categories and date ranges. The UI smartly manages when and where to display "Clear Filters" controls.
 
+## Data Processing & Analysis
+
+The application follows a robust pipeline to turn raw shift records into actionable insights:
+1. **Ingestion & Normalization**: Raw datasets (CSV/Excel) are ingested via Pandas. The system normalizes date formats, parses timestamps regardless of timezone variances, and strips inconsistencies.
+2. **Computed Validation**: Instead of blindly trusting reported hours, the backend independently recalculates durations based on start and end timestamps. Discrepancies are flagged for review.
+3. **Dynamic Aggregation**: When the frontend requests analytics (e.g., summary metrics or efficiency), the backend translates the requested filters (date ranges, category exclusions) into optimized SQL queries. The data is aggregated directly within SQLite before being sent to the client, minimizing payload size.
+4. **Insight Generation**: The dashboard cross-references the aggregated data against predefined operational rules (e.g., identifying consecutive breakdown streaks, calculating micro-stoppage frequencies) to surface intelligent, context-aware alerts.
 
 ## Data Quality Handling
 

@@ -6,7 +6,7 @@ from datetime import datetime
 DB_PATH = Path(__file__).parent / "shifts.db"
 CSV_PATH = Path(__file__).parent.parent / "shift_data.csv"
 
-MISMATCH_THRESHOLD = 0.5  # hours
+MISMATCH_THRESHOLD = 0  # hours
 
 
 def get_db():
