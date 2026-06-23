@@ -33,3 +33,15 @@ app.include_router(analytics.router)
 app.include_router(streaks.router)
 app.include_router(quality.router)
 app.include_router(upload.router)
+
+@app.get("/api")
+def read_root():
+    return {"status": "online", "message": "Shift Analytics API is running"}
+
+@app.get("/")
+def read_root():
+    return {"status": "online", "message": "Shift Analytics API is running"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}

@@ -82,7 +82,8 @@ export default function App() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <p className="text-red-600 font-medium">Error: {error}</p>
           <p className="text-slate-500 text-sm mt-2">
-            Make sure the backend is running and accessible at {import.meta.env.VITE_API_URL || "http://localhost:8000/api"}
+            Make sure the backend is running and accessible at{" "}
+            {import.meta.env.VITE_API_URL || "http://localhost:8000"}
           </p>
         </div>
       </div>
@@ -194,7 +195,10 @@ export default function App() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EfficiencyScore data={efficiency} />
-            <CategoryBreakdown data={summary?.by_category || []} failureCategories={efficiency?.failure_categories || []} />
+            <CategoryBreakdown
+              data={summary?.by_category || []}
+              failureCategories={efficiency?.failure_categories || []}
+            />
           </div>
 
           <ShiftChart
@@ -204,8 +208,14 @@ export default function App() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <EfficiencyTrend data={summary?.by_date || []} failureCategories={efficiency?.failure_categories || []} />
-            <ParetoChart data={summary?.by_category || []} failureCategories={efficiency?.failure_categories || []} />
+            <EfficiencyTrend
+              data={summary?.by_date || []}
+              failureCategories={efficiency?.failure_categories || []}
+            />
+            <ParetoChart
+              data={summary?.by_category || []}
+              failureCategories={efficiency?.failure_categories || []}
+            />
           </div>
 
           <BreakdownStreaks data={streaks} />

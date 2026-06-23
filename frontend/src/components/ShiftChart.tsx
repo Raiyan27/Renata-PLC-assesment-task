@@ -157,7 +157,7 @@ export default function ShiftChart({ data, categories, failureCategories }: Prop
                   stroke="#ffffff"
                   strokeWidth={1.5}
                   className="hover:brightness-110 transition-all cursor-pointer"
-                  onClick={(data: any, index: number, e: any) => {
+                  onClick={(_data: any, index: number, e: any) => {
                     const event = e || index; // Handle different Recharts versions
                     const isAlt = event && event.altKey;
 
