@@ -26,6 +26,13 @@ This is a lightweight analytics API designed for maximum speed. Django's ORM, ad
 - Python 3.11+
 - Node.js 18+
 
+### Environment Configuration
+Create a `.env` file in the root directory of the project to manage environment variables:
+```env
+VITE_API_URL=http://localhost:8000/api
+FRONTEND_URL=http://localhost:5173
+```
+
 ### Python Environment Setup
 ```bash
 cd backend
@@ -60,7 +67,7 @@ Frontend runs at http://localhost:5173.
 ## Core Features
 
 - **Custom Dataset Uploading**: Drag and drop your own `.csv` or `.xlsx` files to instantly ingest new data and recalculate the entire dashboard on the fly.
-- **Interactive Downtime Highlighting**: A dedicated toggle inside the visualizations instantly dims productive categories, creating a high-contrast spotlight exclusively on time-compromising failure events.
+- **Interactive Highlighting**: Clicking segments directly on the pie or bar charts dynamically isolates and highlights specific categories across all dates (Alt+Click allows for multi-select). A dedicated toggle is also available to instantly dim productive categories and spotlight failure events.
 - **Shift Timeline Visualization**: Stacked bar chart showing comprehensive hour distribution by date and category.
 - **Downtime Pareto Chart (80/20 Rule)**: Visually identifies the "vital few" operational issues causing the majority of downtime, overlaid with a cumulative percentage curve.
 - **Breakdown Streak Detection**: Programmatically identifies consecutive-day machine failure patterns that point to systemic, unresolved maintenance issues.

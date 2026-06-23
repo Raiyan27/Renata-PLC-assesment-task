@@ -82,7 +82,7 @@ export default function App() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <p className="text-red-600 font-medium">Error: {error}</p>
           <p className="text-slate-500 text-sm mt-2">
-            Make sure the backend is running on http://localhost:8000
+            Make sure the backend is running and accessible at {import.meta.env.VITE_API_URL || "http://localhost:8000/api"}
           </p>
         </div>
       </div>

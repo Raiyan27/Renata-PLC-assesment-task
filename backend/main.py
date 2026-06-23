@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+
+# Load from the parent directory's .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 from contextlib import asynccontextmanager
 from database import init_db
 from routes import shifts, analytics, streaks, quality, upload
@@ -13,9 +18,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Shift Analytics API", lifespan=lifespan)
 
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+origins = [origin.strip() for origin in frontend_url.split(",")] if frontend_url else ["http://localhost:5173"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
