@@ -26,10 +26,25 @@ This is a lightweight analytics API designed for maximum speed. Django's ORM, ad
 - Python 3.11+
 - Node.js 18+
 
+### Python Environment Setup
+```bash
+cd backend
+# 1. Create a virtual environment
+python -m venv .venv
+
+# 2. Activate it
+# Windows
+.venv\Scripts\activate
+# Mac/Linux
+source .venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+```
+
 ### Backend
 ```bash
 cd backend
-pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 Backend runs at http://localhost:8000. API docs at http://localhost:8000/docs.

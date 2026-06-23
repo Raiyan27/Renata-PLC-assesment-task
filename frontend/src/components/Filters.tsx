@@ -228,10 +228,10 @@ export default function FilterBar({ filters, onChange, categories }: Props) {
               DD-MMM-YY
             </button>
             <button
-              onClick={() => setDateFormat("iso")}
-              className={`px-2 py-1 text-[11px] font-medium rounded ${dateFormat === 'iso' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+              onClick={() => setDateFormat("dd_mm_yyyy")}
+              className={`px-2 py-1 text-[11px] font-medium rounded ${dateFormat === 'dd_mm_yyyy' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
             >
-              YYYY-MM-DD
+              DD-MM-YYYY
             </button>
           </div>
         </div>

@@ -23,7 +23,7 @@ interface Props {
 
 export default function CategoryBreakdown({ data, failureCategories }: Props) {
   const { formatTime } = useFormat();
-  const [highlightDowntime, setHighlightDowntime] = useState(false);
+  const [selectedSegments, setSelectedSegments] = useState<string[]>([]);
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center flex items-center justify-center min-h-[200px]">
@@ -45,17 +45,26 @@ export default function CategoryBreakdown({ data, failureCategories }: Props) {
         <h2 className="text-lg font-semibold text-slate-800">
           Hours by Category
         </h2>
-        {failureCategories && failureCategories.length > 0 && (
+        {failureCategories && failureCategories.length > 0 && selectedSegments.length === 0 && (
           <button
-            onClick={() => setHighlightDowntime(!highlightDowntime)}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-              highlightDowntime 
-                ? "bg-rose-100 text-rose-700 hover:bg-rose-200" 
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+            onClick={() => setSelectedSegments(failureCategories)}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200"
           >
-            {highlightDowntime ? "Clear Highlight" : "Highlight Downtime"}
+            Highlight Downtime
           </button>
+        )}
+        {selectedSegments.length > 0 && (
+          <div className="flex items-center gap-3">
+            {selectedSegments.length === 1 && (
+              <span className="text-[11px] text-slate-400 italic">Tip: Alt + Click to select multiple</span>
+            )}
+            <button
+              onClick={() => setSelectedSegments([])}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors bg-rose-100 text-rose-700 hover:bg-rose-200"
+            >
+              Clear Highlight
+            </button>
+          </div>
         )}
       </div>
       <div className="relative flex items-center justify-center">
@@ -75,23 +84,42 @@ export default function CategoryBreakdown({ data, failureCategories }: Props) {
               data={chartData}
               cx="50%"
               cy="50%"
-              innerRadius={90}
-              outerRadius={130}
+              innerRadius={105}
+              outerRadius={150}
               dataKey="value"
               paddingAngle={4}
               stroke="none"
               cornerRadius={4}
               label={false}
+              onClick={(data: any, index: number, e: any) => {
+                const name = data.name;
+                const event = e || index; // Handle different Recharts versions
+                const isAlt = event && event.altKey;
+
+                if (isAlt) {
+                  if (selectedSegments.includes(name)) {
+                    setSelectedSegments(selectedSegments.filter((s) => s !== name));
+                  } else {
+                    setSelectedSegments([...selectedSegments, name]);
+                  }
+                } else {
+                  if (selectedSegments.length === 1 && selectedSegments[0] === name) {
+                    setSelectedSegments([]);
+                  } else {
+                    setSelectedSegments([name]);
+                  }
+                }
+              }}
             >
               {chartData.map((entry, i) => (
                 <Cell 
                   key={i} 
                   fill={
-                    highlightDowntime && failureCategories && !failureCategories.includes(entry.name)
+                    selectedSegments.length > 0 && !selectedSegments.includes(entry.name)
                       ? "#e2e8f0" 
                       : COLORS[i % COLORS.length]
                   } 
-                  className="hover:opacity-80 transition-opacity outline-none" 
+                  className="hover:opacity-80 transition-opacity outline-none cursor-pointer" 
                 />
               ))}
             </Pie>
@@ -106,7 +134,10 @@ export default function CategoryBreakdown({ data, failureCategories }: Props) {
                 padding: "10px 14px",
               }}
               itemStyle={{ color: "#475569", fontWeight: 500 }}
-              formatter={((value: number) => [formatTime(value), "Duration"]) as never}
+              formatter={((value: number) => {
+                const percentage = ((value / totalHours) * 100).toFixed(1);
+                return [`${formatTime(value)} (${percentage}%)`, "Duration"];
+              }) as never}
             />
             <Legend
               verticalAlign="bottom"

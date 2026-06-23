@@ -26,6 +26,7 @@ interface Props {
 
 const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) => {
   if (active && payload && payload.length) {
+    const dayTotal = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
     return (
       <div className="bg-white border border-slate-100 rounded-xl shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),_0_4px_6px_-4px_rgba(0,0,0,0.1)] p-4 text-sm min-w-[180px]">
         <p className="font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">{formatDate(label)}</p>
@@ -35,6 +36,8 @@ const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) 
             ? `${original.start} to ${original.end}` 
             : null;
             
+          const percentage = dayTotal > 0 ? ((entry.value / dayTotal) * 100).toFixed(1) : "0.0";
+            
           return (
             <div key={index} className="mb-2 last:mb-0">
               <div className="flex items-center justify-between gap-4">
@@ -42,7 +45,7 @@ const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) 
                   {entry.name}
                 </span>
                 <span className="font-bold text-slate-700">
-                  {formatTime(entry.value)}
+                  {formatTime(entry.value)} ({percentage}%)
                 </span>
               </div>
               {timeText && (
@@ -61,7 +64,7 @@ const CustomTooltip = ({ active, payload, label, formatTime, formatDate }: any) 
 
 export default function ShiftChart({ data, categories, failureCategories }: Props) {
   const { formatTime, formatDate } = useFormat();
-  const [highlightDowntime, setHighlightDowntime] = useState(false);
+  const [selectedSegments, setSelectedSegments] = useState<string[]>([]);
   if (!data.length) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm text-slate-400 text-center">
@@ -90,17 +93,26 @@ export default function ShiftChart({ data, categories, failureCategories }: Prop
         <h2 className="text-lg font-semibold text-slate-800">
           Shift Activity by Date
         </h2>
-        {failureCategories && failureCategories.length > 0 && (
+        {failureCategories && failureCategories.length > 0 && selectedSegments.length === 0 && (
           <button
-            onClick={() => setHighlightDowntime(!highlightDowntime)}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-              highlightDowntime 
-                ? "bg-rose-100 text-rose-700 hover:bg-rose-200" 
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+            onClick={() => setSelectedSegments(failureCategories)}
+            className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200"
           >
-            {highlightDowntime ? "Clear Highlight" : "Highlight Downtime"}
+            Highlight Downtime
           </button>
+        )}
+        {selectedSegments.length > 0 && (
+          <div className="flex items-center gap-3">
+            {selectedSegments.length === 1 && (
+              <span className="text-[11px] text-slate-400 italic">Tip: Alt + Click to select multiple</span>
+            )}
+            <button
+              onClick={() => setSelectedSegments([])}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors bg-rose-100 text-rose-700 hover:bg-rose-200"
+            >
+              Clear Highlight
+            </button>
+          </div>
         )}
       </div>
       <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-slate-100 pb-2">
@@ -138,13 +150,31 @@ export default function ShiftChart({ data, categories, failureCategories }: Prop
                   dataKey={cat}
                   stackId="a"
                   fill={
-                    highlightDowntime && failureCategories && !failureCategories.includes(cat)
+                    selectedSegments.length > 0 && !selectedSegments.includes(cat)
                       ? "#e2e8f0" // Dim color
                       : COLORS[i % COLORS.length]
                   }
                   stroke="#ffffff"
                   strokeWidth={1.5}
-                  className="hover:brightness-110 transition-all"
+                  className="hover:brightness-110 transition-all cursor-pointer"
+                  onClick={(data: any, index: number, e: any) => {
+                    const event = e || index; // Handle different Recharts versions
+                    const isAlt = event && event.altKey;
+
+                    if (isAlt) {
+                      if (selectedSegments.includes(cat)) {
+                        setSelectedSegments(selectedSegments.filter((s) => s !== cat));
+                      } else {
+                        setSelectedSegments([...selectedSegments, cat]);
+                      }
+                    } else {
+                      if (selectedSegments.length === 1 && selectedSegments[0] === cat) {
+                        setSelectedSegments([]);
+                      } else {
+                        setSelectedSegments([cat]);
+                      }
+                    }
+                  }}
                 />
               ))}
             </BarChart>

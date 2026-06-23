@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 type TimeFormat = "h_m" | "decimal";
-type DateFormat = "dd_mmm_yy" | "iso";
+type DateFormat = "dd_mmm_yy" | "dd_mm_yyyy";
 
 interface FormatContextType {
   timeFormat: TimeFormat;
@@ -38,14 +38,18 @@ export function FormatProvider({ children }: { children: ReactNode }) {
   };
 
   const formatDate = (val: string) => {
-    if (dateFormat === "iso") return val;
     const parts = val.split("-");
     if (parts.length !== 3) return val;
-    const year = parts[0].slice(2);
-    const monthIdx = parseInt(parts[1], 10) - 1;
+    const year = parts[0];
+    const month = parts[1];
     const day = parts[2];
-    const monthName = monthIdx >= 0 && monthIdx < 12 ? MONTHS[monthIdx] : parts[1];
-    return `${day}-${monthName}-${year}`;
+    if (dateFormat === "dd_mm_yyyy") {
+      return `${day}-${month}-${year}`;
+    }
+    const shortYear = year.slice(2);
+    const monthIdx = parseInt(month, 10) - 1;
+    const monthName = monthIdx >= 0 && monthIdx < 12 ? MONTHS[monthIdx] : month;
+    return `${day}-${monthName}-${shortYear}`;
   };
 
   return (
