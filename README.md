@@ -1,5 +1,9 @@
 # Shift Analytics Dashboard
 
+**Live Demo**: [http://shift-analytics-dashboard.surge.sh](http://shift-analytics-dashboard.surge.sh)  
+**Video Overview**: [https://youtu.be/u8LDcF5beOQ](https://youtu.be/u8LDcF5beOQ)  
+*(Note: The backend API is hosted on Render, which means the server may spin down if unused for a long time. Please allow up to 2 minutes for the dashboard to initially load if the server is waking up.)*
+
 A modern, highly interactive web application for analyzing employee shift data, detecting operational patterns, and generating actionable manufacturing insights.
 
 ## Tech Stack
